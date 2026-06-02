@@ -12,7 +12,7 @@ description = "Pure time-series storage and query engine for chronodb (no I/O, n
 thiserror.workspace = true
 
 [dev-dependencies]
-criterion = "0.5"
+criterion = "0.8"
 
 [[bench]]
 name = "throughput"
