@@ -1,0 +1,12 @@
+[package]
+name = "chronodb-core"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "Pure time-series storage and query engine for chronodb (no I/O, no clock)."
+
+[dependencies]
+thiserror.workspace = true
