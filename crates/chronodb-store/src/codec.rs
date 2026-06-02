@@ -18,7 +18,11 @@ mod tests {
 
     #[test]
     fn roundtrips_a_record() {
-        let record = WalRecord { series: "cpu".into(), timestamp: 42, value: 3.5 };
+        let record = WalRecord {
+            series: "cpu".into(),
+            timestamp: 42,
+            value: 3.5,
+        };
         let line = encode(&record).unwrap();
         assert_eq!(decode(&line).unwrap(), record);
     }

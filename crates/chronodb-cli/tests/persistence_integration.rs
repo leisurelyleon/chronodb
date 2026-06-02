@@ -21,7 +21,10 @@ fn store_from_wal(path: &PathBuf, partition_size: u64) -> Store {
     let records = wal.replay().expect("replay should succeed");
     let mut store = Store::new(partition_size);
     for record in &records {
-        store.ingest(record.series.clone(), DataPoint::new(record.timestamp, record.value));
+        store.ingest(
+            record.series.clone(),
+            DataPoint::new(record.timestamp, record.value),
+        );
     }
     store
 }
@@ -34,8 +37,12 @@ fn wal_replay_feeds_windowed_query() {
     {
         let mut wal = FileWal::new(&path);
         for t in (0u64..120).step_by(10) {
-            wal.append(&WalRecord { series: "cpu".into(), timestamp: t, value: (t + 10) as f64 })
-                .expect("append should succeed");
+            wal.append(&WalRecord {
+                series: "cpu".into(),
+                timestamp: t,
+                value: (t + 10) as f64,
+            })
+            .expect("append should succeed");
         }
     }
 
@@ -59,11 +66,21 @@ fn appends_accumulate_across_handles() {
     // Two separate WAL sessions append to the same file.
     {
         let mut wal = FileWal::new(&path);
-        wal.append(&WalRecord { series: "mem".into(), timestamp: 0, value: 1.0 }).unwrap();
+        wal.append(&WalRecord {
+            series: "mem".into(),
+            timestamp: 0,
+            value: 1.0,
+        })
+        .unwrap();
     }
     {
         let mut wal = FileWal::new(&path);
-        wal.append(&WalRecord { series: "mem".into(), timestamp: 60, value: 2.0 }).unwrap();
+        wal.append(&WalRecord {
+            series: "mem".into(),
+            timestamp: 60,
+            value: 2.0,
+        })
+        .unwrap();
     }
 
     // Both points survive: the second handle appended, not overwrote.
@@ -86,8 +103,18 @@ fn multi_series_wal_queries_independently() {
     {
         let mut wal = FileWal::new(&path);
         for t in (0u64..60).step_by(10) {
-            wal.append(&WalRecord { series: "cpu".into(), timestamp: t, value: 100.0 }).unwrap();
-            wal.append(&WalRecord { series: "mem".into(), timestamp: t, value: 5.0 }).unwrap();
+            wal.append(&WalRecord {
+                series: "cpu".into(),
+                timestamp: t,
+                value: 100.0,
+            })
+            .unwrap();
+            wal.append(&WalRecord {
+                series: "mem".into(),
+                timestamp: t,
+                value: 5.0,
+            })
+            .unwrap();
         }
     }
 

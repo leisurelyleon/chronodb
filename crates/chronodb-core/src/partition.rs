@@ -13,7 +13,11 @@ pub struct Partition {
 
 impl Partition {
     pub fn new(start: Timestamp, size: u64) -> Self {
-        Self { start, size, points: Vec::new() }
+        Self {
+            start,
+            size,
+            points: Vec::new(),
+        }
     }
 
     pub fn start(&self) -> Timestamp {
@@ -36,7 +40,9 @@ impl Partition {
     /// Inserts a point, preserving ascending timestamp order. Points with equal
     /// timestamps retain insertion order (stable).
     pub fn insert(&mut self, point: DataPoint) {
-        let idx = self.points.partition_point(|p| p.timestamp <= point.timestamp);
+        let idx = self
+            .points
+            .partition_point(|p| p.timestamp <= point.timestamp);
         self.points.insert(idx, point);
     }
 

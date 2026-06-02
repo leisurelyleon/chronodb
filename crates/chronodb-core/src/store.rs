@@ -2,7 +2,7 @@
 
 use std::collections::BTreeMap;
 
-use crate::aggregate::{aggregate, WindowResult};
+use crate::aggregate::{WindowResult, aggregate};
 use crate::error::CoreError;
 use crate::point::{DataPoint, SeriesKey, Timestamp};
 use crate::query::QuerySpec;
@@ -62,7 +62,10 @@ impl Store {
     /// `horizon` relative to `now`. Returns the total partitions dropped.
     pub fn retain(&mut self, now: Timestamp, horizon: u64) -> usize {
         let cutoff = retention::cutoff(now, horizon);
-        self.series.values_mut().map(|series| series.retain(cutoff)).sum()
+        self.series
+            .values_mut()
+            .map(|series| series.retain(cutoff))
+            .sum()
     }
 }
 

@@ -14,7 +14,7 @@ pub mod retention;
 pub mod series;
 pub mod store;
 
-pub use aggregate::{aggregate, Aggregation, WindowResult};
+pub use aggregate::{Aggregation, WindowResult, aggregate};
 pub use error::CoreError;
 pub use partition::Partition;
 pub use point::{DataPoint, SeriesKey, Timestamp, Value};

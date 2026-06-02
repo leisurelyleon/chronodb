@@ -61,7 +61,11 @@ pub fn aggregate(
             Aggregation::Avg => values.iter().copied().sum::<f64>() / count as f64,
             Aggregation::Count => count as f64,
         };
-        results.push(WindowResult { start, value, count });
+        results.push(WindowResult {
+            start,
+            value,
+            count,
+        });
     }
 
     Ok(results)
@@ -86,7 +90,10 @@ mod tests {
 
     #[test]
     fn zero_window_is_rejected() {
-        assert!(matches!(aggregate(&points(), 0, Aggregation::Avg), Err(CoreError::InvalidWindow)));
+        assert!(matches!(
+            aggregate(&points(), 0, Aggregation::Avg),
+            Err(CoreError::InvalidWindow)
+        ));
     }
 
     #[test]
@@ -94,8 +101,22 @@ mod tests {
         // [0,30): 1,2,3 -> avg 2.0 ; [30,60): 4,5,6 -> avg 5.0
         let result = aggregate(&points(), 30, Aggregation::Avg).unwrap();
         assert_eq!(result.len(), 2);
-        assert_eq!(result[0], WindowResult { start: 0, value: 2.0, count: 3 });
-        assert_eq!(result[1], WindowResult { start: 30, value: 5.0, count: 3 });
+        assert_eq!(
+            result[0],
+            WindowResult {
+                start: 0,
+                value: 2.0,
+                count: 3
+            }
+        );
+        assert_eq!(
+            result[1],
+            WindowResult {
+                start: 30,
+                value: 5.0,
+                count: 3
+            }
+        );
     }
 
     #[test]

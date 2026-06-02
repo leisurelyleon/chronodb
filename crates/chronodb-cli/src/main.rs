@@ -12,12 +12,21 @@ use chronodb_store::{FileWal, WalRecord, WriteAheadLog};
 fn main() -> ExitCode {
     let cli = Cli::parse();
     let result = match cli.command {
-        Command::Ingest { wal, series, timestamp, value } => {
-            cmd_ingest(&wal, series, timestamp, value)
-        }
-        Command::Query { wal, series, from, to, window, agg, partition_size } => {
-            cmd_query(&wal, &series, from, to, window, agg, partition_size)
-        }
+        Command::Ingest {
+            wal,
+            series,
+            timestamp,
+            value,
+        } => cmd_ingest(&wal, series, timestamp, value),
+        Command::Query {
+            wal,
+            series,
+            from,
+            to,
+            window,
+            agg,
+            partition_size,
+        } => cmd_query(&wal, &series, from, to, window, agg, partition_size),
         Command::Demo => {
             run_demo();
             Ok(())
@@ -33,14 +42,14 @@ fn main() -> ExitCode {
     }
 }
 
-fn cmd_ingest(
-    wal_path: &Path,
-    series: String,
-    timestamp: u64,
-    value: f64,
-) -> Result<(), String> {
+fn cmd_ingest(wal_path: &Path, series: String, timestamp: u64, value: f64) -> Result<(), String> {
     let mut wal = FileWal::new(wal_path);
-    wal.append(&WalRecord { series, timestamp, value }).map_err(|e| e.to_string())?;
+    wal.append(&WalRecord {
+        series,
+        timestamp,
+        value,
+    })
+    .map_err(|e| e.to_string())?;
     println!("Appended point to {}.", wal_path.display());
     Ok(())
 }
@@ -61,7 +70,10 @@ fn cmd_query(
 
     let mut store = Store::new(partition_size);
     for record in &records {
-        store.ingest(record.series.clone(), DataPoint::new(record.timestamp, record.value));
+        store.ingest(
+            record.series.clone(),
+            DataPoint::new(record.timestamp, record.value),
+        );
     }
 
     let spec = QuerySpec::new(from, to, window, agg.to_core());
@@ -73,7 +85,10 @@ fn cmd_query(
 fn print_windows(series: &str, windows: &[WindowResult]) {
     println!("series '{series}': {} window(s)", windows.len());
     for window in windows {
-        println!("  [{:>6}] value={:<10} count={}", window.start, window.value, window.count);
+        println!(
+            "  [{:>6}] value={:<10} count={}",
+            window.start, window.value, window.count
+        );
     }
 }
 
@@ -97,8 +112,10 @@ fn run_demo() {
 
     println!("\n== Retention: now=120, horizon=60 (drop data older than tick 60) ==");
     let dropped = store.retain(120, 60);
-    println!("dropped {dropped} expired partition(s); 'cpu' now holds {} points",
-             store.point_count("cpu"));
+    println!(
+        "dropped {dropped} expired partition(s); 'cpu' now holds {} points",
+        store.point_count("cpu")
+    );
 
     println!("\n== Re-query after retention ==");
     let after = store.query("cpu", &spec).unwrap();

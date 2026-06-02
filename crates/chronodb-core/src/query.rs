@@ -15,6 +15,11 @@ pub struct QuerySpec {
 
 impl QuerySpec {
     pub fn new(from: Timestamp, to: Timestamp, window: u64, agg: Aggregation) -> Self {
-        Self { from, to, window, agg }
+        Self {
+            from,
+            to,
+            window,
+            agg,
+        }
     }
 }
